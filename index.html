@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachable Machine 이미지 분류 데모</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- TensorFlow.js & TM Image Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+
+<body>
+<div class="app">
+    <header class="app-header">
+        <div class="title-group">
+            <h1>Teachable Machine 이미지 분류</h1>
+            <p>사진을 업로드하면 모델이 예측해줍니다.</p>
+        </div>
+        <div class="badge">
+            <span class="badge-dot"></span>
+            <span>TensorFlow.js · Teachable Machine</span>
+        </div>
+    </header>
+
+    <main class="layout">
+
+        <!-- 이미지 업로드 -->
+        <section class="card">
+            <h2><span class="icon">🖼️</span> 이미지 업로드</h2>
+
+            <div id="image-container" class="placeholder">
+                사진을 업로드하세요.
+            </div>
+
+            <!-- 커스텀 업로드 박스 (드래그 + 클릭) -->
+            <label for="imageUpload" id="uploadBox" class="upload-box">
+                <span class="upload-icon">📁</span>
+                <span class="upload-text">클릭하거나 파일을 드래그하여 업로드</span>
+            </label>
+            <input type="file" id="imageUpload" accept="image/*" hidden>
+
+            <!-- 검색 버튼 -->
+            <div style="margin-top:12px;">
+                <button id="predictBtn" class="btn btn-primary">🔍 검색하기</button>
+            </div>
+        </section>
+
+        <!-- 예측 결과 -->
+        <section class="card">
+            <h2><span class="icon">📊</span> 예측 결과</h2>
+            <div id="top-prediction">예측 대기 중입니다.</div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div>Powered by Teachable Machine & TensorFlow.js</div>
+    </footer>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
