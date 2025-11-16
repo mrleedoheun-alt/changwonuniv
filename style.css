@@ -248,8 +248,9 @@ body {
 .map-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
 }
 
 .secondary-btn {
@@ -265,6 +266,7 @@ body {
         background 0.15s ease,
         border-color 0.15s ease,
         transform 0.1s ease;
+    white-space: nowrap;
 }
 
 .secondary-btn:hover {
@@ -273,9 +275,44 @@ body {
     transform: translateY(-1px);
 }
 
+/* 호관 입력 인풋 + '호관' 고정 텍스트 */
+.building-input-group {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.8);
+    background: rgba(15, 23, 42, 0.9);
+    overflow: hidden;
+}
+
+.building-input {
+    width: 70px;
+    padding: 7px 8px 7px 12px;
+    border: none;
+    background: transparent;
+    color: #e5e7eb;
+    font-size: 0.8rem;
+    outline: none;
+    text-align: right;
+}
+
+.building-input::placeholder {
+    color: #6b7280;
+}
+
+.building-input-suffix {
+    padding: 7px 10px 7px 4px;
+    font-size: 0.8rem;
+    color: #e5e7eb;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* 안내 텍스트 */
 .map-tip {
     font-size: 0.78rem;
     color: #9ca3af;
+    margin-bottom: 8px;
 }
 
 /* 맵 컨테이너 */

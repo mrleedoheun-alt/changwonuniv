@@ -73,7 +73,7 @@ uploadBox.addEventListener("drop", (e) => {
 });
 
 /* ============================
- * 3. 예측 실행
+ * 3. 예측 실행 (사진으로 호관 찾기)
  * ============================ */
 document.getElementById("predictBtn").addEventListener("click", async () => {
     if (!uploadedImage) {
@@ -102,7 +102,6 @@ async function predictImage(imageElement) {
         }
     }
 
-    // 확률 없이 결과만 출력
     const resultEl = document.getElementById("top-prediction");
     if (bestClass) {
         resultEl.textContent = `예측 결과: ${bestClass}`;
@@ -110,7 +109,7 @@ async function predictImage(imageElement) {
         resultEl.textContent = "예측 결과를 가져오지 못했습니다.";
     }
 
-    // 카카오맵 업데이트
+    // 카카오맵 업데이트 (사진으로 인식한 호관)
     if (bestClass) {
         updateMapWithBuilding(bestClass);
     }
@@ -153,10 +152,10 @@ if (document.readyState === "loading") {
 }
 
 /* ============================
- * 5. 예측 결과로 건물 검색 & 마커 이동
+ * 5. 예측 결과/입력값으로 건물 검색 & 마커 이동
  * ============================ */
 
-// 예측된 className을 이용해 검색 키워드 만들기
+// 예측된 className 또는 직접 입력 값을 이용해 검색 키워드 만들기
 function buildSearchKeyword(rawName) {
     let name = (rawName || "").trim();
 
@@ -185,6 +184,7 @@ function updateMapWithBuilding(buildingName) {
     places.keywordSearch(keyword, function (data, status) {
         if (status !== kakao.maps.services.Status.OK || !data.length) {
             console.warn("검색 결과 없음:", keyword);
+            alert(`"${buildingName}"에 해당하는 위치를 찾지 못했습니다.`);
             return;
         }
 
@@ -212,10 +212,12 @@ function updateMapWithBuilding(buildingName) {
 }
 
 /* ============================
- * 6. 현재 위치 찾기 (Geolocation)
+ * 6. 현재 위치 찾기 (Geolocation) + 호관 입력 검색
  * ============================ */
 
 const locateMeBtn = document.getElementById("locateMeBtn");
+const buildingInput = document.getElementById("buildingInput");
+const buildingSearchBtn = document.getElementById("buildingSearchBtn");
 
 locateMeBtn.addEventListener("click", () => {
     if (!navigator.geolocation) {
@@ -263,6 +265,22 @@ locateMeBtn.addEventListener("click", () => {
             maximumAge: 0
         }
     );
+});
+
+// 호관을 직접 입력해서 검색
+buildingSearchBtn.addEventListener("click", () => {
+    const value = buildingInput.value.trim();
+    if (!value) {
+        alert("호관 번호를 입력하세요. (예: 9)");
+        return;
+    }
+    updateMapWithBuilding(value);
+});
+
+buildingInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        buildingSearchBtn.click();
+    }
 });
 
 /* ============================
