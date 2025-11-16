@@ -3,65 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>창원대 건물찾기</title>
+    <title>창원대 호관 인식 · KakaoMap 매핑 데모</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- TensorFlow.js & TM Image Library -->
+    <!-- TensorFlow.js & Teachable Machine Image Library -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 </head>
 
 <body>
 <div class="app">
-    <header class="app-header">
+    <!-- 헤더 -->
+    <header class="header">
         <div class="title-group">
-            <h1>Teachable Machine 이미지 분류</h1>
-            <p>사진을 업로드하면 모델이 예측해줍니다.</p>
+            <h1>창원대학교 호관 인식</h1>
+            <p>사진으로 호관을 인식한 뒤, 결과를 이용해 카카오맵에서 위치·거리·예상 도보 시간을 표시합니다.</p>
         </div>
         <div class="badge">
-            <span class="badge-dot"></span>
-            <span>TensorFlow.js · Teachable Machine</span>
+            <span class="dot"></span>
+            <span>Teachable Machine · Kakao Map</span>
         </div>
     </header>
 
-    <main class="layout">
+    <!-- 메인 콘텐츠 -->
+    <main class="content-grid">
+        <!-- 왼쪽: 업로드 / 미리보기 / 예측 -->
+        <section class="panel">
+            <h2 class="panel-title">1. 사진 업로드</h2>
+            <p class="panel-subtitle">호관 외관이 보이도록 사진을 업로드하거나 드래그해서 올려주세요.</p>
 
-        <!-- 이미지 업로드 -->
-        <section class="card">
-            <h2><span class="icon">🖼️</span> 이미지 업로드</h2>
-
-            <div id="image-container" class="placeholder">
-                사진을 업로드하세요.
+            <!-- 드래그 & 드랍 박스 -->
+            <div id="uploadBox" class="upload-box">
+                <div class="upload-inner">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text-main">이미지를 여기에 드롭</div>
+                    <div class="upload-text-sub">또는 아래 버튼으로 파일 선택</div>
+                    <label class="upload-btn">
+                        이미지 선택
+                        <input id="imageUpload" type="file" accept="image/*">
+                    </label>
+                </div>
             </div>
 
-            <!-- 커스텀 업로드 박스 (드래그 + 클릭) -->
-            <label for="imageUpload" id="uploadBox" class="upload-box">
-                <span class="upload-icon">📁</span>
-                <span class="upload-text">클릭하거나 파일을 드래그하여 업로드</span>
-            </label>
-            <input type="file" id="imageUpload" accept="image/*" hidden>
+            <!-- 이미지 미리보기 -->
+            <div id="image-container" class="image-container">
+                <p class="image-placeholder">아직 업로드된 이미지가 없습니다.</p>
+            </div>
 
-            <!-- 검색 버튼 -->
-            <div style="margin-top:12px;">
-                <button id="predictBtn" class="btn btn-primary">🔍 검색하기</button>
+            <!-- 예측 버튼 -->
+            <button id="predictBtn" class="primary-btn">검색하기</button>
+
+            <!-- 예측 결과 -->
+            <div class="result-box">
+                <h3>예측 결과</h3>
+                <p id="top-prediction" class="result-text">
+                    이미지를 업로드한 뒤 <b>검색하기</b> 버튼을 눌러주세요.
+                </p>
             </div>
         </section>
 
-        <!-- 예측 결과 -->
-        <section class="card">
-            <h2><span class="icon">📊</span> 예측 결과</h2>
-            <div id="top-prediction">예측 대기 중입니다.</div>
-        </section>
+        <!-- 오른쪽: 카카오맵 -->
+        <section class="panel">
+            <h2 class="panel-title">2. 카카오맵에서 위치 · 경로 · 시간 확인</h2>
+            <p class="panel-subtitle">
+                <b>내 위치 찾기</b> 버튼으로 현재 위치를 가져온 뒤, 사진을 예측하면
+                현재 위치에서 사진 속 호관까지의 <b>직선 경로, 거리, 예상 도보 시간</b>을 지도에 표시합니다.
+            </p>
 
+            <div class="map-controls">
+                <button id="locateMeBtn" class="secondary-btn">내 위치 찾기</button>
+                <span class="map-tip">HTTPS(또는 localhost)에서만 위치 가져오기가 정상 동작합니다.</span>
+            </div>
+
+            <div id="map" class="map-container"></div>
+
+            <div id="route-info" class="route-info">
+                <div id="route-distance">거리: -</div>
+                <div id="route-time">예상 도보 시간: -</div>
+            </div>
+
+            <p class="map-note">
+                ※ 표시되는 선은 실제 도로 길찾기 경로가 아니라, 현재 위치와 목적지 사이를
+                <b>직선으로 이은 경로</b>를 기준으로 계산한 값입니다.
+            </p>
+        </section>
     </main>
 
+    <!-- 푸터 -->
     <footer class="footer">
-        <div>Powered by Teachable Machine & TensorFlow.js</div>
+        <div>Powered by Teachable Machine · TensorFlow.js · Kakao Map</div>
     </footer>
 </div>
 
+<!-- Kakao Map JS SDK (services 라이브러리 포함) -->
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ffca199a482127df9ba564a0df48a257&libraries=services"></script>
+
+<!-- 메인 스크립트 -->
 <script src="main.js"></script>
 </body>
 </html>
-
