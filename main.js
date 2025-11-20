@@ -1,5 +1,5 @@
 // TM 모델 URL
-const MODEL_URL = "https://teachablemachine.withgoogle.com/models/SDZpnWgTQ/";
+const MODEL_URL = "https://teachablemachine.withgoogle.com/models/q2mlbzWga/";
 
 let model;
 let maxPredictions;
